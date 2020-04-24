@@ -14,5 +14,5 @@ matrix:
   - name: "Linux x86_64"
     os: linux
     script:
-      - g++ test_build.cpp
+      - g++ test.cpp
       
