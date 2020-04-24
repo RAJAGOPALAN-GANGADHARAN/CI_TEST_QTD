@@ -13,8 +13,10 @@ matrix:
   include:
   - name: "Linux x86_64"
     os: linux
+    install:
+      - sudo pip3 install requests semantic_version lxml
+      - ls
+      - sudo ./qt-downloader
     script:
       - g++ test.cpp
-      - ./a.out
-      - pwd
-      
+      - ls     
