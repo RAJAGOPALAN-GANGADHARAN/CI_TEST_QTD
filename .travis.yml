@@ -15,4 +15,6 @@ matrix:
     os: linux
     script:
       - g++ test.cpp
+      - ./a.out
+      - pwd
       
