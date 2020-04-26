@@ -10,6 +10,8 @@ import sys
 import urllib.request
 from lxml import etree, html
 from pathlib import Path
+import os
+import shlex
 
 
 BaseUrl = 'https://download.qt.io/online/qtsdkrepository/'
@@ -115,23 +117,26 @@ def get_info(url, version, toolchain):
   return None
 
 
-def download_and_extract(archives_url, archives):
+def download_and_extract(archives_url, archives, output, req_modules):
   for archive in archives:
     try:
       module = archive.split('-')[0]
+      # if req_modules != None and (module not in req_modules):
+      #   continue
       print('Downloading module {}... '.format(module), end='', flush=True)
+      print(archives_url+archive)
       with urllib.request.urlopen(archives_url + archive) as response, open(archive, 'wb') as out_file:
         shutil.copyfileobj(response, out_file)
 
       print('\rExtracting module {}... '.format(module), end='', flush=True)
-      subprocess.run('7z x {}'.format(archive), shell=True, check=True,
+      subprocess.run('7z x {0} -o{1}'.format(archive, output), shell=True, check=True,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       print('\rInstalled module {} successfully'.format(module))
     except subprocess.CalledProcessError as e:
       print('Error: {}'.format(e))
 
       os_type = deduce_os()
-      saggestion = ''
+      suggestion = ''
       if os_type == 'linux':
         suggestion = ' Run sudo apt install p7zip-full on Ubuntu'
       elif os_type == 'macos':
@@ -313,6 +318,9 @@ def main():
   parser.add_argument('version', nargs='?', default='discover', help='Qt version conforming to Semantic Versioning format: major.minor.patch. Use \'latest\' to get most up to date version. Omit this to discover available versions.')
   parser.add_argument('toolchain', nargs='?', default='discover', help='Toolchain to use. Omit this to discover available toolchains')
   parser.add_argument('-a', '--all', action='store_true', help='Discover allowed values for all missing arguments')
+  parser.add_argument('--output', default='', help='Output directory')
+  parser.add_argument('--qt_modules', default='', help='Download selected qt modules')
+
   args = parser.parse_args()
 
   show_discover_context(args, parser)
@@ -333,7 +341,8 @@ def main():
       sys.exit(1)
 
     name, version, archives = info
-    download_and_extract(url + name + '/' + version, archives)
+    qt_modules = shlex.split(args.qt_modules)
+    download_and_extract(url + name + '/' + version, archives, args.output, qt_modules)
 
 
 if __name__ == '__main__':
