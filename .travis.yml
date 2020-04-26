@@ -16,7 +16,7 @@ matrix:
     install:
       - sudo pip3 install requests semantic_version lxml
       - ls
-      - sudo ./qt-downloader
+      - sudo python3 ./qt-downloader linux desktop 5.15.0 gcc_64
     script:
       - g++ test.cpp
       - ls     
