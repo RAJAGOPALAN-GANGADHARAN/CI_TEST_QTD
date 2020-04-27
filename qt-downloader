@@ -121,7 +121,7 @@ def download_and_extract(archives_url, archives, output, req_modules):
   for archive in archives:
     try:
       module = archive.split('-')[0]
-      if req_modules != None and (module not in req_modules):
+      if len(req_modules) != 0 and (module not in req_modules):
         continue
       print('Downloading module {}... '.format(module), end='', flush=True)
       print(archives_url+archive)
@@ -147,7 +147,9 @@ def download_and_extract(archives_url, archives, output, req_modules):
       print('Interrupted')
       raise KeyboardInterrupt
     finally:
-      Path(archive).unlink()
+      module = archive.split('-')[0]
+      if len(req_modules) == 0 or (module in req_modules):
+        Path(archive).unlink()
 
   print('Finished installation')
 
