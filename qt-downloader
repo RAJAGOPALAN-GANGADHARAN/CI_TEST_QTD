@@ -121,8 +121,8 @@ def download_and_extract(archives_url, archives, output, req_modules):
   for archive in archives:
     try:
       module = archive.split('-')[0]
-      # if req_modules != None and (module not in req_modules):
-      #   continue
+      if req_modules != None and (module not in req_modules):
+        continue
       print('Downloading module {}... '.format(module), end='', flush=True)
       print(archives_url+archive)
       with urllib.request.urlopen(archives_url + archive) as response, open(archive, 'wb') as out_file:
